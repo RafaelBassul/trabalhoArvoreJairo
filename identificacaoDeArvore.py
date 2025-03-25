@@ -50,14 +50,14 @@ def eh_perfeita(raiz, profundidade=None, nivel=0):
 # Função para verificar se a árvore é completa
 def eh_completa(raiz):
     fila = [(raiz, 0)]
-    total_nos = contar_nos(raiz)
     indice = 0
     while fila:
         no, pos = fila.pop(0)
         if pos != indice:
             return False
-        for filho in no.filhos:
-            fila.append((filho, 2 * pos + 1))
+        for i, filho in enumerate(no.filhos):
+            new_pos = 2 * pos + 1 + i
+            fila.append((filho, new_pos))
         indice += 1
     return True
 
