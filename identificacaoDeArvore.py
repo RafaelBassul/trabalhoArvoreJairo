@@ -39,12 +39,15 @@ def eh_cheia(raiz):
 def eh_perfeita(raiz, profundidade=None, nivel=0):
     if not raiz:
         return True
-    if not raiz.filhos:  # Se for folha
+    # Se o nó for folha
+    if not raiz.filhos:
         if profundidade is None:
             profundidade = nivel
         return nivel == profundidade
-    if any(len(filho.filhos) != len(raiz.filhos[0].filhos) for filho in raiz.filhos):
+    # Se o nó tem filhos, deve ter exatamente 2 filhos
+    if len(raiz.filhos) != 2:
         return False
+    # Verificar recursivamente todos os filhos
     return all(eh_perfeita(filho, profundidade, nivel + 1) for filho in raiz.filhos)
 
 # Função para verificar se a árvore é completa
