@@ -1,77 +1,95 @@
 class No:
     def __init__(self, valor):
         self.valor = valor
-        self.esquerda = None
-        self.direita = None
+        self.filhos = []  # Lista de filhos (suporta mais de dois)
 
-# Função para verificar se é uma Árvore Binária de Busca (BST)
-def eh_bst(raiz, valor_min=float('-inf'), valor_max=float('inf')):
+    def adicionar_filho(self, filho):
+        self.filhos.append(filho)
+
+# Função para verificar se a árvore é binária
+def eh_binaria(raiz):
     if not raiz:
         return True
-    if not (valor_min < raiz.valor < valor_max):
+    if len(raiz.filhos) > 2:
         return False
-    return eh_bst(raiz.esquerda, valor_min, raiz.valor) and eh_bst(raiz.direita, raiz.valor, valor_max)
+    return all(eh_binaria(filho) for filho in raiz.filhos)
 
 # Função para contar nós
 def contar_nos(raiz):
     if not raiz:
         return 0
-    return 1 + contar_nos(raiz.esquerda) + contar_nos(raiz.direita)
-
-# Função para verificar se é completa
-def eh_completa(raiz, indice=0, total_nos=None):
-    if not raiz:
-        return True
-    if total_nos is None:
-        total_nos = contar_nos(raiz)
-    if indice >= total_nos:
-        return False
-    return eh_completa(raiz.esquerda, 2 * indice + 1, total_nos) and eh_completa(raiz.direita, 2 * indice + 2, total_nos)
-
-# Função para verificar se é cheia
-def eh_cheia(raiz):
-    if not raiz:
-        return True
-    if (raiz.esquerda is None and raiz.direita is not None) or (raiz.esquerda is not None and raiz.direita is None):
-        return False
-    return eh_cheia(raiz.esquerda) and eh_cheia(raiz.direita)
+    return 1 + sum(contar_nos(filho) for filho in raiz.filhos)
 
 # Função para calcular altura
 def calcular_altura(raiz):
     if not raiz:
         return 0
-    return 1 + max(calcular_altura(raiz.esquerda), calcular_altura(raiz.direita))
+    return 1 + max((calcular_altura(filho) for filho in raiz.filhos), default=0)
 
-# Função para verificar se é perfeita
+# Função para verificar se a árvore é cheia
+def eh_cheia(raiz):
+    if not raiz:
+        return True
+    qtd_filhos = len(raiz.filhos)
+    if qtd_filhos > 0 and any(len(filho.filhos) not in [0, qtd_filhos] for filho in raiz.filhos):
+        return False
+    return all(eh_cheia(filho) for filho in raiz.filhos)
+
+# Função para verificar se a árvore é perfeita
 def eh_perfeita(raiz, profundidade=None, nivel=0):
     if not raiz:
         return True
-    if not raiz.esquerda and not raiz.direita:  
+    if not raiz.filhos:  # Se for folha
         if profundidade is None:
             profundidade = nivel
         return nivel == profundidade
-    if not raiz.esquerda or not raiz.direita:
-        return False  
-    return eh_perfeita(raiz.esquerda, profundidade, nivel + 1) and eh_perfeita(raiz.direita, profundidade, nivel + 1)
+    if any(len(filho.filhos) != len(raiz.filhos[0].filhos) for filho in raiz.filhos):
+        return False
+    return all(eh_perfeita(filho, profundidade, nivel + 1) for filho in raiz.filhos)
+
+# Função para verificar se a árvore é completa
+def eh_completa(raiz):
+    fila = [(raiz, 0)]
+    total_nos = contar_nos(raiz)
+    indice = 0
+    while fila:
+        no, pos = fila.pop(0)
+        if pos != indice:
+            return False
+        for filho in no.filhos:
+            fila.append((filho, 2 * pos + 1))
+        indice += 1
+    return True
 
 # Função principal para determinar o tipo da árvore
 def tipo_arvore(raiz):
+    if not eh_binaria(raiz):
+        return "Árvore Não Binária"
     if eh_perfeita(raiz):
-        return "Árvore Perfeita"
+        return "Árvore Binária Perfeita"
     elif eh_cheia(raiz):
-        return "Árvore Cheia"
+        return "Árvore Binária Cheia"
     elif eh_completa(raiz):
-        return "Árvore Completa"
-    elif eh_bst(raiz):
-        return "Árvore Binária de Busca"
+        return "Árvore Binária Completa"
     else:
         return "Árvore Binária"
 
+# Exemplo de uso:
 raiz = No(1)
-raiz.esquerda = No(2)
-raiz.direita = No(3)
-raiz.esquerda.esquerda = No(4)
-raiz.esquerda.direita = No(5)
-raiz.direita.esquerda = No(6)
-raiz.direita.direita = No(7)
-print(tipo_arvore(raiz))
+filho2 = No(2)
+filho3 = No(3)
+filho4 = No(4)
+filho5 = No(5)
+filho6 = No(6)
+filho7 = No(7)
+filho_extra = No(8)
+
+raiz.adicionar_filho(filho2)
+raiz.adicionar_filho(filho3)
+#raiz.adicionar_filho(filho4)  # Descomentar esta linha para tornar a árvore nao binária
+
+filho2.adicionar_filho(filho5)
+filho2.adicionar_filho(filho6)
+filho3.adicionar_filho(filho7)
+
+print(tipo_arvore(raiz)) 
