@@ -89,6 +89,13 @@ def tipo_arvore(raiz):
     else:
         print("A árvore não se encaixa em nenhum tipo específico.")
 
+def listar_Caminhos(raiz, String):
+    String += f"{raiz.valor}" + " "
+    if raiz.filhos == []:
+        print(String)
+    for filho in raiz.filhos:
+        listar_Caminhos(filho, String)
+
 raiz = No(1)
 filho2 = No(2)
 filho3 = No(3)
@@ -105,4 +112,5 @@ raiz.adicionar_filho(filho3)
 filho2.adicionar_filho(filho5)
 filho2.adicionar_filho(filho6)
 filho3.adicionar_filho(filho7)
+listar_Caminhos(raiz, "")
 print(tipo_arvore(raiz)) 
