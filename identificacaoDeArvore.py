@@ -66,16 +66,28 @@ def eh_completa(raiz):
 
 # Função principal para determinar o tipo da árvore
 def tipo_arvore(raiz):
+    tipos = []
+
+    # Verifica os tipos de árvore
     if not eh_binaria(raiz):
-        return "Árvore Não Binária"
-    if eh_perfeita(raiz):
-        return "Árvore Binária Perfeita"
-    elif eh_cheia(raiz):
-        return "Árvore Binária Cheia"
-    elif eh_completa(raiz):
-        return "Árvore Binária Completa"
+        tipos.append("Árvore Não Binária")
     else:
-        return "Árvore Binária"
+        if eh_perfeita(raiz):
+            tipos.append("Árvore Binária Perfeita")
+        if eh_cheia(raiz):
+            tipos.append("Árvore Binária Cheia")
+        if eh_completa(raiz):
+            tipos.append("Árvore Binária Completa")
+        if not eh_perfeita(raiz) and not eh_cheia(raiz) and not eh_completa(raiz):
+            tipos.append("Árvore Binária")
+
+    # Imprime os tipos encontrados
+    if tipos:
+        print("A árvore é:")
+        for tipo in tipos:
+            print(f"- {tipo}")
+    else:
+        print("A árvore não se encaixa em nenhum tipo específico.")
 
 raiz = No(1)
 filho2 = No(2)
