@@ -74,7 +74,6 @@ def tipo_arvore(raiz):
     else:
         return "Árvore Binária"
 
-# Exemplo de uso:
 raiz = No(1)
 filho2 = No(2)
 filho3 = No(3)
@@ -91,5 +90,4 @@ raiz.adicionar_filho(filho3)
 filho2.adicionar_filho(filho5)
 filho2.adicionar_filho(filho6)
 filho3.adicionar_filho(filho7)
-
 print(tipo_arvore(raiz)) 
