@@ -24,8 +24,12 @@ def contar_nos(raiz):
 def calcular_altura(raiz):
     if not raiz:
         return 0
-    return 1 + max((calcular_altura(filho) for filho in raiz.filhos), default=0)
+    return 1 + max((calcular_altura(filho) for filho in raiz.filhos), default=-1)
 
+def calcular_altura_para_função(raiz):
+    if not raiz:
+        return 0
+    return 1 + max((calcular_altura_para_função(filho) for filho in raiz.filhos), default=0)
 
 
 # Função para verificar se a árvore é perfeita
@@ -57,6 +61,32 @@ def eh_completa(raiz):
         indice += 1
     return True
 
+# Função para verificar se a árvore é BST
+def eh_bst(raiz, minimo=float('-inf'), maximo=float('inf')):
+    if not raiz:
+        return True
+    if not (minimo < raiz.valor < maximo):
+        return False
+    if len(raiz.filhos) > 2:
+        return False  # Se tem mais de dois filhos, não pode ser BST
+    esquerda = raiz.filhos[0] if len(raiz.filhos) > 0 else None
+    direita = raiz.filhos[1] if len(raiz.filhos) > 1 else None
+    return eh_bst(esquerda, minimo, raiz.valor) and eh_bst(direita, raiz.valor, maximo)
+
+# Função para verificar se a árvore é AVL
+def eh_avl(raiz):
+    if not raiz:
+        return True
+    if len(raiz.filhos) > 2:
+        return False  # Se tem mais de dois filhos, não pode ser AVL
+    esquerda = raiz.filhos[0] if len(raiz.filhos) > 0 else None
+    direita = raiz.filhos[1] if len(raiz.filhos) > 1 else None
+    altura_esq = calcular_altura_para_função(esquerda) 
+    altura_dir = calcular_altura_para_função(direita) 
+    if abs(altura_esq - altura_dir) > 1:
+        return False
+    return eh_avl(esquerda) and eh_avl(direita)
+
 # Função principal para determinar o tipo da árvore
 def tipo_arvore(raiz):
     tipos = []
@@ -67,9 +97,15 @@ def tipo_arvore(raiz):
     else:
         if eh_cheia(raiz):
             tipos.append("Árvore Binária Cheia")
-        if eh_completa(raiz):
+        if eh_completa(raiz) and not eh_cheia(raiz):
             tipos.append("Árvore Binária Completa")
-        if not eh_cheia(raiz) and not eh_cheia(raiz) and not eh_completa(raiz):
+        if eh_bst(raiz):
+            tipos.append("Árvore binária de busca")
+            if eh_avl(raiz):
+                tipos.append("árvore binária de busca balanceada")
+
+
+        if not eh_cheia(raiz) and not eh_cheia(raiz) and not eh_completa(raiz) and not eh_bst(raiz):
             tipos.append("Árvore Binária")
 
     # Imprime os tipos encontrados
@@ -113,22 +149,21 @@ def em_ordem(raiz):
     else:
         print("Não é uma árvore binária")
 
-raiz = No(1)
-filho2 = No(2)
-filho3 = No(3)
-filho4 = No(4)
-filho5 = No(5)
-filho6 = No(6)
-filho7 = No(7)
-filho_extra = No(8)
+raiz = No(10)
+filho2 = No(5)
+filho3 = No(15)
+filho4 = No(3)
+filho5 = No(7)
+filho6 = No(12)
+filho7 = No(18)
 
 raiz.adicionar_filho(filho2)
 raiz.adicionar_filho(filho3)
-#raiz.adicionar_filho(filho4)  # Descomentar esta linha para tornar a árvore nao binária
+raiz.adicionar_filho(filho7)
 
+filho2.adicionar_filho(filho4)
 filho2.adicionar_filho(filho5)
-filho2.adicionar_filho(filho6)
-filho3.adicionar_filho(filho7)
+
 
 print("Listagem de Caminhos:")
 listar_Caminhos(raiz, "")
