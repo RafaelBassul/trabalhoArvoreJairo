@@ -26,17 +26,10 @@ def calcular_altura(raiz):
         return 0
     return 1 + max((calcular_altura(filho) for filho in raiz.filhos), default=0)
 
-# Função para verificar se a árvore é cheia
-def eh_cheia(raiz):
-    if not raiz:
-        return True
-    qtd_filhos = len(raiz.filhos)
-    if qtd_filhos > 0 and any(len(filho.filhos) not in [0, qtd_filhos] for filho in raiz.filhos):
-        return False
-    return all(eh_cheia(filho) for filho in raiz.filhos)
+
 
 # Função para verificar se a árvore é perfeita
-def eh_perfeita(raiz, profundidade=None, nivel=0):
+def eh_cheia(raiz, profundidade=None, nivel=0):
     if not raiz:
         return True
     # Se o nó for folha
@@ -48,7 +41,7 @@ def eh_perfeita(raiz, profundidade=None, nivel=0):
     if len(raiz.filhos) != 2:
         return False
     # Verificar recursivamente todos os filhos
-    return all(eh_perfeita(filho, profundidade, nivel + 1) for filho in raiz.filhos)
+    return all(eh_cheia(filho, profundidade, nivel + 1) for filho in raiz.filhos)
 
 # Função para verificar se a árvore é completa
 def eh_completa(raiz):
@@ -72,13 +65,11 @@ def tipo_arvore(raiz):
     if not eh_binaria(raiz):
         tipos.append("Árvore Não Binária")
     else:
-        if eh_perfeita(raiz):
-            tipos.append("Árvore Binária Perfeita")
         if eh_cheia(raiz):
             tipos.append("Árvore Binária Cheia")
         if eh_completa(raiz):
             tipos.append("Árvore Binária Completa")
-        if not eh_perfeita(raiz) and not eh_cheia(raiz) and not eh_completa(raiz):
+        if not eh_cheia(raiz) and not eh_cheia(raiz) and not eh_completa(raiz):
             tipos.append("Árvore Binária")
 
     # Imprime os tipos encontrados
@@ -138,8 +129,11 @@ raiz.adicionar_filho(filho3)
 filho2.adicionar_filho(filho5)
 filho2.adicionar_filho(filho6)
 filho3.adicionar_filho(filho7)
+
+print("Listagem de Caminhos:")
 listar_Caminhos(raiz, "")
-print(tipo_arvore(raiz)) 
+
+tipo_arvore(raiz)
 
 print("\nPré-Ordem:")
 pre_ordem(raiz)
