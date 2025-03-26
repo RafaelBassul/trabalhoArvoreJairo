@@ -96,6 +96,32 @@ def listar_Caminhos(raiz, String):
     for filho in raiz.filhos:
         listar_Caminhos(filho, String)
 
+def pre_ordem(raiz):
+    if raiz and eh_binaria(raiz):  
+        print(raiz.valor, end=" ")  
+        for filho in raiz.filhos:
+            pre_ordem(filho)
+    else:
+        print("Não é uma árvore binária")
+
+def pos_ordem(raiz):
+    if raiz and eh_binaria(raiz): 
+        for filho in raiz.filhos:
+            pos_ordem(filho)
+        print(raiz.valor, end=" ")  
+    else:
+        print("Não é uma árvore binária")
+
+def em_ordem(raiz):
+    if raiz and eh_binaria(raiz):  
+        if len(raiz.filhos) > 0:
+            em_ordem(raiz.filhos[0])
+        print(raiz.valor, end=" ") 
+        if len(raiz.filhos) > 1:
+            em_ordem(raiz.filhos[1])
+    else:
+        print("Não é uma árvore binária")
+
 raiz = No(1)
 filho2 = No(2)
 filho3 = No(3)
@@ -114,3 +140,10 @@ filho2.adicionar_filho(filho6)
 filho3.adicionar_filho(filho7)
 listar_Caminhos(raiz, "")
 print(tipo_arvore(raiz)) 
+
+print("\nPré-Ordem:")
+pre_ordem(raiz)
+print("\nPós-Ordem:")
+pos_ordem(raiz)
+print("\nEm-Ordem:")
+em_ordem(raiz)
