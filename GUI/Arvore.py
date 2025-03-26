@@ -107,6 +107,8 @@ def calcular_altura_para_função(raiz):
 def eh_bst(raiz, minimo=float('-inf'), maximo=float('inf')):
     if not raiz:
         return True
+    if not (minimo < raiz.valor < maximo):
+        return False
     if len(raiz.filhos) > 2:
         return False  # Se tem mais de dois filhos, não pode ser BST
     esquerda = raiz.filhos[0] if len(raiz.filhos) > 0 else None
