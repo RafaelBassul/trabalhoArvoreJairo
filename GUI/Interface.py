@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import Canvas
-from Arvore import No
 from Arvore import eh_binaria, contar_nos, calcular_altura, tipo_arvore, listar_Caminhos, coletar_caminhos
 from ArvoresTeste import teste1, teste2, teste3, teste4, teste5, teste6, teste7, teste8
 
@@ -11,7 +10,11 @@ class InterfaceArvore(tk.Tk):
         self.title("Programa de árvores")
 
         if tree is None:
-            raise Exception("Árvore vazia/inválida")
+            arvVazia = "Árvore vazia\n Tipos: Binária balanceada cheia\n"
+            arvVazia += " Altura: 0\n Incapaz de percorrer caminhos ou percurso"
+            self.label = tk.Label(self, text=arvVazia, font=('Arial', 12, 'italic'), bg="lightgray", width=100)
+            self.label.pack(pady=5)
+            return
 
         # Frame para os botões no top
         self.button_frame = tk.Frame(self)
@@ -196,7 +199,7 @@ def main():
         app.mainloop()
     except Exception:
         print("\nÁrvore inválida/vazia")
-        print("Por favor, insira uma árvore válida")
+        print("Por favor, insira uma árvore válida ou não vazia")
 
 
 if __name__ == "__main__":
