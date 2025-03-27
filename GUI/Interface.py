@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import Canvas
-import time
 from Arvore import No
 from Arvore import eh_binaria, contar_nos, calcular_altura, tipo_arvore, listar_Caminhos, coletar_caminhos
 
@@ -49,6 +48,9 @@ class InterfaceArvore(tk.Tk):
         self.draw_tree(self.tree, 400, 50, 150, 50)
 
     def exibir_preordem(self, raiz=None, resultado=None):
+        self.reset_graph()
+        InterfaceArvore.path_counter = 0
+
         if raiz is None and self.tree:
             raiz = self.tree
         if resultado is None:
@@ -64,6 +66,9 @@ class InterfaceArvore(tk.Tk):
         self.label.config(text=f"Pre-ordem: {texto_resultado}")
 
     def exibir_posordem(self, raiz=None, resultado=None):
+        self.reset_graph()
+        InterfaceArvore.path_counter = 0
+
         if raiz is None and self.tree:
             raiz = self.tree
         if resultado is None:
@@ -79,6 +84,9 @@ class InterfaceArvore(tk.Tk):
         self.label.config(text=f"Pos-ordem: {texto_resultado}")
     
     def exibir_emordem(self, raiz=None, resultado=None):
+        self.reset_graph()
+        InterfaceArvore.path_counter = 0
+
         if raiz is None and self.tree:
             raiz = self.tree
         if resultado is None:
@@ -117,6 +125,9 @@ class InterfaceArvore(tk.Tk):
             InterfaceArvore.path_counter += 1
             
     def exibir_altura(self):
+        self.reset_graph()
+        InterfaceArvore.path_counter = 0
+
         altura = calcular_altura(self.tree)
         n_nos = contar_nos(self.tree)
 
@@ -124,6 +135,9 @@ class InterfaceArvore(tk.Tk):
         self.label.config(text=texto)
 
     def exibir_tipo(self):
+        self.reset_graph()
+        InterfaceArvore.path_counter = 0
+
         tipos = tipo_arvore(self.tree)
         string_tipos = "Os tipos da árvore:\n"
 
@@ -157,28 +171,33 @@ class InterfaceArvore(tk.Tk):
         self.canvas.delete("all")
         self.draw_tree(self.tree, 400, 50, 150, 50)
 
-# Árvore de teste (alterar árvore aqui)
-root = No(50)
-child1 = No(75)
-child2 = No(25)
-child3 = No(12)
-child4 = No(37)
-child5 = No(100)
-child6 = No(34)
-child7 = No(70)
-child8 = No(80)
-child9 = No(87)
-root.adicionar_filho(child2)
-root.adicionar_filho(child1)
-#root.adicionar_filho(child5)
-#root.adicionar_filho(child6)
-child2.adicionar_filho(child3)
-child2.adicionar_filho(child4)
-child1.adicionar_filho(child7)
-child1.adicionar_filho(child8)
-#child3.adicionar_filho(child9)
+
+def main():
+    # Árvore de teste (alterar árvore aqui)
+    root = No(50)
+    child1 = No(75)
+    child2 = No(25)
+    child3 = No(12)
+    child4 = No(37)
+    child5 = No(100)
+    child6 = No(34)
+    child7 = No(70)
+    child8 = No(80)
+    child9 = No(87)
+    root.adicionar_filho(child2)
+    root.adicionar_filho(child1)
+    #root.adicionar_filho(child5)
+    #root.adicionar_filho(child6)
+    child2.adicionar_filho(child3)
+    child2.adicionar_filho(child4)
+    child1.adicionar_filho(child7)
+    child1.adicionar_filho(child8)
+    #child3.adicionar_filho(child9)
+
+    # Carregar / Abrir interface gráfica
+    app = InterfaceArvore(root)
+    app.mainloop()
 
 
-# Carregar / Abrir interface gráfica
-app = InterfaceArvore(root)
-app.mainloop()
+if __name__ == "__main__":
+    main()
