@@ -2,12 +2,16 @@ import tkinter as tk
 from tkinter import Canvas
 from Arvore import No
 from Arvore import eh_binaria, contar_nos, calcular_altura, tipo_arvore, listar_Caminhos, coletar_caminhos
+from ArvoresTeste import teste1, teste2, teste3, teste4, teste5, teste6, teste7, teste8
 
 
 class InterfaceArvore(tk.Tk):
-    def __init__(self, tree):
+    def __init__(self, tree=None):
         super().__init__()
         self.title("Programa de árvores")
+
+        if tree is None:
+            raise Exception("Árvore vazia/inválida")
 
         # Frame para os botões no top
         self.button_frame = tk.Frame(self)
@@ -23,13 +27,13 @@ class InterfaceArvore(tk.Tk):
         self.button_caminhos = tk.Button(self.button_frame, text="Listar caminhos", command=self.exibir_caminhos)
         self.button_caminhos.pack(side=tk.LEFT, padx=5)
 
-        self.button_preordem = tk.Button(self.button_frame, text="Pre-ordem", command=self.exibir_preordem)
+        self.button_preordem = tk.Button(self.button_frame, text="Pre-ordem", command=lambda:self.exibir_preordem(self.tree))
         self.button_preordem.pack(side=tk.LEFT, padx=5)
 
-        self.button_emordem = tk.Button(self.button_frame, text="Em-ordem", command=self.exibir_emordem)
+        self.button_emordem = tk.Button(self.button_frame, text="Em-ordem", command=lambda:self.exibir_emordem(self.tree))
         self.button_emordem.pack(side=tk.LEFT, padx=5)
 
-        self.button_posordem = tk.Button(self.button_frame, text="Pos-ordem", command=self.exibir_posordem)
+        self.button_posordem = tk.Button(self.button_frame, text="Pos-ordem", command=lambda:self.exibir_posordem(self.tree))
         self.button_posordem.pack(side=tk.LEFT, padx=5)
 
 
@@ -47,15 +51,15 @@ class InterfaceArvore(tk.Tk):
 
         self.draw_tree(self.tree, 400, 50, 150, 50)
 
-    def exibir_preordem(self, raiz=None, resultado=None):
+    def exibir_preordem(self, raiz, resultado=None):
         self.reset_graph()
         InterfaceArvore.path_counter = 0
 
-        if raiz is None and self.tree:
-            raiz = self.tree
+        if raiz is None:
+            return
         if resultado is None:
             resultado = []
-        if raiz and eh_binaria(raiz):  
+        if eh_binaria(raiz):  
             resultado.append(str(raiz.valor))
             for filho in raiz.filhos:
                 self.exibir_preordem(filho, resultado)
@@ -65,15 +69,15 @@ class InterfaceArvore(tk.Tk):
         texto_resultado = " - ".join(resultado)
         self.label.config(text=f"Pre-ordem: {texto_resultado}")
 
-    def exibir_posordem(self, raiz=None, resultado=None):
+    def exibir_posordem(self, raiz, resultado=None):
         self.reset_graph()
         InterfaceArvore.path_counter = 0
 
-        if raiz is None and self.tree:
-            raiz = self.tree
+        if raiz is None:
+            return
         if resultado is None:
             resultado = []
-        if raiz and eh_binaria(raiz):  
+        if eh_binaria(raiz):  
             for filho in raiz.filhos:
                 self.exibir_posordem(filho, resultado)
             resultado.append(str(raiz.valor))
@@ -83,15 +87,15 @@ class InterfaceArvore(tk.Tk):
         texto_resultado = " - ".join(resultado)
         self.label.config(text=f"Pos-ordem: {texto_resultado}")
     
-    def exibir_emordem(self, raiz=None, resultado=None):
+    def exibir_emordem(self, raiz, resultado=None):
         self.reset_graph()
         InterfaceArvore.path_counter = 0
 
-        if raiz is None and self.tree:
-            raiz = self.tree
+        if raiz is None:
+            return
         if resultado is None:
             resultado = []
-        if raiz and eh_binaria(raiz): 
+        if eh_binaria(raiz): 
             if len(raiz.filhos) > 0:
                 self.exibir_emordem(raiz.filhos[0], resultado)
             resultado.append(str(raiz.valor))
@@ -151,14 +155,17 @@ class InterfaceArvore(tk.Tk):
         self.label.config(text=string_tipos)
 
     def draw_tree(self, node, x, y, x_offset, y_offset):
+        if node is None:
+            return
         # Desenha linhas para nós filhos
         for i, child in enumerate(node.filhos):
-            child_x = x + (i - len(node.filhos) // 2) * x_offset
-            child_y = y + y_offset
-            self.canvas.create_line(x, y, child_x, child_y, arrow=tk.LAST)
+            if child is not None: 
+                child_x = x + (i - len(node.filhos) // 2) * x_offset
+                child_y = y + y_offset
+                self.canvas.create_line(x, y, child_x, child_y, arrow=tk.LAST)
 
-            # Recursivamente desenha a árvore filha
-            self.draw_tree(child, child_x, child_y, x_offset // 2, y_offset)
+                # Recursivamente desenha a árvore filha
+                self.draw_tree(child, child_x, child_y, x_offset // 2, y_offset)
 
         # Desenha as bolinhas com o texto
         oval_id = self.canvas.create_oval(x-20, y-20, x+20, y+20, fill='lightblue', outline='black')
@@ -174,29 +181,22 @@ class InterfaceArvore(tk.Tk):
 
 def main():
     # Árvore de teste (alterar árvore aqui)
-    root = No(50)
-    child1 = No(75)
-    child2 = No(25)
-    child3 = No(12)
-    child4 = No(37)
-    child5 = No(100)
-    child6 = No(34)
-    child7 = No(70)
-    child8 = No(80)
-    child9 = No(87)
-    root.adicionar_filho(child2)
-    root.adicionar_filho(child1)
-    #root.adicionar_filho(child5)
-    #root.adicionar_filho(child6)
-    child2.adicionar_filho(child3)
-    child2.adicionar_filho(child4)
-    child1.adicionar_filho(child7)
-    child1.adicionar_filho(child8)
-    #child3.adicionar_filho(child9)
+    #root = teste1()
+    #root = teste2()
+    #root = teste3()
+    #root = teste4()
+    #root = teste5()
+    #root = teste6()
+    #root = teste7()
+    root = teste8()
 
     # Carregar / Abrir interface gráfica
-    app = InterfaceArvore(root)
-    app.mainloop()
+    try:
+        app = InterfaceArvore(root)
+        app.mainloop()
+    except Exception:
+        print("\nÁrvore inválida/vazia")
+        print("Por favor, insira uma árvore válida")
 
 
 if __name__ == "__main__":

@@ -33,7 +33,7 @@ def calcular_altura(raiz):
 # Função para verificar se a árvore é cheia
 def eh_cheia(raiz, profundidade=None, nivel=0):
     if not raiz:
-        return True
+        return False
     # Se o nó for folha
     if not raiz.filhos:
         if profundidade is None:
@@ -47,17 +47,21 @@ def eh_cheia(raiz, profundidade=None, nivel=0):
 
 # Função para verificar se a árvore é completa
 def eh_completa(raiz):
-    fila = [(raiz, 0)]
-    indice = 0
-    while fila:
-        no, pos = fila.pop(0)
-        if pos != indice:
-            return False
-        for i, filho in enumerate(no.filhos):
-            new_pos = 2 * pos + 1 + i
-            fila.append((filho, new_pos))
-        indice += 1
-    return True
+    if raiz is None:
+        return True
+    else:
+        fila = [(raiz, 0)]
+        indice = 0
+        while fila:
+            no, pos = fila.pop(0)
+            if no is not None:   
+                if pos != indice:
+                    return False
+                for i, filho in enumerate(no.filhos):
+                    new_pos = 2 * pos + 1 + i
+                    fila.append((filho, new_pos))
+                indice += 1
+        return True
 
 # Função principal para determinar o tipo da árvore
 def tipo_arvore(raiz):
@@ -82,6 +86,8 @@ def tipo_arvore(raiz):
     return tipos
 
 def listar_Caminhos(raiz, String):
+    if raiz is None:
+        return
     String += f"{raiz.valor}" + " - "
     if raiz.filhos == []:
         yield String[:-2]
@@ -90,6 +96,8 @@ def listar_Caminhos(raiz, String):
             yield from listar_Caminhos(filho, String)
 
 def coletar_caminhos(raiz, paths, path=None):
+    if raiz is None:
+        return
     if path is None:
         path = []
     path.append(raiz)
