@@ -184,22 +184,21 @@ class InterfaceArvore(tk.Tk):
 
 def main():
     # Árvore de teste (alterar árvore aqui)
-    #root = teste1()
+    root = teste1()
     #root = teste2()
     #root = teste3()
     #root = teste4()
     #root = teste5()
     #root = teste6()
     #root = teste7()
-    root = teste8()
+    #root = teste8()
 
     # Carregar / Abrir interface gráfica
     try:
         app = InterfaceArvore(root)
         app.mainloop()
-    except Exception:
-        print("\nÁrvore inválida/vazia")
-        print("Por favor, insira uma árvore válida ou não vazia")
+    except Exception as e:
+        print(f"\nAlgo deu errado: {str(e)}")
 
 
 if __name__ == "__main__":
