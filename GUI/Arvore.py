@@ -1,138 +1,157 @@
-class No:
-    _Id_counter = 0
+from collections import deque
 
-    def __init__(self, valor):
-        self.id = No._Id_counter
-        No._Id_counter += 1
-        self.valor = valor
-        self.filhos = []  # Lista de filhos (suporta mais de dois)
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-    def adicionar_filho(self, filho):
-        self.filhos.append(filho)
+class BinaryTree:
+    def __init__(self) -> None:
+        self.root = None
 
-# Função para verificar se a árvore é binária
-def eh_binaria(raiz):
-    if not raiz:
-        return True
-    if len(raiz.filhos) > 2:
-        return False
-    return all(eh_binaria(filho) for filho in raiz.filhos)
+    def insert_level_order(self, data): # Inserção automática por nível, partindo da raiz
+        root = self.root
+        if root is None:
+            root = Node(data)
+            return root
 
-# Função para contar nós
-def contar_nos(raiz):
-    if not raiz:
-        return 0
-    return 1 + sum(contar_nos(filho) for filho in raiz.filhos)
+        q = deque()
+        q.append(root)
 
-# Função para calcular altura
-def calcular_altura(raiz):
-    if not raiz:
-        return 0
-    return 1 + max((calcular_altura(filho) for filho in raiz.filhos), default=-1)
+        while q:
 
-# Função para verificar se a árvore é cheia
-def eh_cheia(raiz, profundidade=None, nivel=0):
-    if not raiz:
-        return False
-    # Se o nó for folha
-    if not raiz.filhos:
-        if profundidade is None:
-            profundidade = nivel
-        return nivel == profundidade
-    # Se o nó tem filhos, deve ter exatamente 2 filhos
-    if len(raiz.filhos) != 2:
-        return False
-    # Verificar recursivamente todos os filhos
-    return all(eh_cheia(filho, profundidade, nivel + 1) for filho in raiz.filhos)
+            curr = q.popleft()
 
-# Função para verificar se a árvore é completa
-def eh_completa(raiz):
-    if raiz is None:
-        return True
-    else:
-        fila = [(raiz, 0)]
-        indice = 0
-        while fila:
-            no, pos = fila.pop(0)
-            if no is not None:   
-                if pos != indice:
-                    return False
-                for i, filho in enumerate(no.filhos):
-                    new_pos = 2 * pos + 1 + i
-                    fila.append((filho, new_pos))
-                indice += 1
-        return True
+            if curr.left is not None:
+                q.append(curr.left)
+            else:
+                curr.left = Node(data)
+                return root
 
-# Função principal para determinar o tipo da árvore
-def tipo_arvore(raiz):
-    tipos = []
+            if curr.right is not None:
+                q.append(curr.right)
+            else:
+                curr.right = Node(data)
+                return root
 
-    ## Verifica os tipos de árvore
-    if not eh_binaria(raiz):
-        tipos.append("Árvore Não Binária")
-    else:
-        if eh_cheia(raiz):
-            tipos.append("Árvore Binária Cheia")
-        if eh_completa(raiz) and not eh_cheia(raiz):
-            tipos.append("Árvore Binária Completa")
-        if eh_bst(raiz):
-            tipos.append("Árvore Binária de Busca")
-            if eh_avl(raiz):
-                tipos.append("Árvore Binária de Busca Balanceada")
+    def inorder(self, node: Node):
+        current = node
+        if current is None:
+            return
 
-        if not eh_cheia(raiz) and not eh_cheia(raiz) and not eh_completa(raiz) and not eh_bst(raiz):
-            tipos.append("Árvore Binária")
+        self.inorder(current.left)
+        print(current.data)
+        self.inorder(current.right)
 
-    return tipos
 
-def listar_Caminhos(raiz, String):
-    if raiz is None:
-        return
-    String += f"{raiz.valor}" + " - "
-    if raiz.filhos == []:
-        yield String[:-2]
-    else:
-        for filho in raiz.filhos:
-            yield from listar_Caminhos(filho, String)
+    def preorder(self, node: Node):
+        current = node
+        if current is None:
+            return
 
-def coletar_caminhos(raiz, paths, path=None):
-    if raiz is None:
-        return
-    if path is None:
-        path = []
-    path.append(raiz)
-    if raiz.filhos == []:
-        paths.append(path.copy())
-    for filho in raiz.filhos:
-        coletar_caminhos(filho, paths, path.copy())
+        print(current.data)
+        self.preorder(current.left)
+        self.preorder(current.right)
 
-def calcular_altura_para_função(raiz):
-    if not raiz:
-        return 0
-    return 1 + max((calcular_altura_para_função(filho) for filho in raiz.filhos), default=0)
+    def postorder(self, node: Node):
+        current = node
+        if current is None:
+            return
 
-# Função para verificar se a árvore é BST
-def eh_bst(raiz, minimo=float('-inf'), maximo=float('inf')):
-    if not raiz:
-        return True
-    if not (minimo < raiz.valor < maximo):
-        return False
-    if len(raiz.filhos) > 2:
-        return False  # Se tem mais de dois filhos, não pode ser BST
-    esquerda = raiz.filhos[0] if len(raiz.filhos) > 0 else None
-    direita = raiz.filhos[1] if len(raiz.filhos) > 1 else None
-    return eh_bst(esquerda, minimo, raiz.valor) and eh_bst(direita, raiz.valor, maximo)
+        self.postorder(current.left)
+        self.postorder(current.right)
+        print(current.data)
 
-# Função para verificar se a árvore é AVL
-def eh_avl(raiz):
-    if not raiz:
-        return True
-    if len(raiz.filhos) > 2:
-        return False  # Se tem mais de dois filhos, não pode ser AVL
-    esquerda = raiz.filhos[0] if len(raiz.filhos) > 0 else None
-    direita = raiz.filhos[1] if len(raiz.filhos) > 1 else None
-    altura_esq = calcular_altura_para_função(esquerda)
-    altura_dir = calcular_altura_para_função(direita)
-    if abs(altura_esq - altura_dir) > 1:
-        return False
-    return eh_avl(esquerda) and eh_avl(direita)
+    def level_order(self):
+        root = self.root
+
+        if root is None:
+            return []
+
+        q = []
+        res = []
+
+        q.append(root)
+        curr_level = 0
+
+        while q:
+            len_q = len(q)
+            res.append([])
+
+            for _ in range(len_q):
+                node = q.pop(0)
+                res[curr_level].append(node.data)
+
+                if node.left is not None:
+                    q.append(node.left)
+
+                if node.right is not None:
+                    q.append(node.right)
+            curr_level += 1
+        return res
+
+    def is_perfect(self, node: Node, profundidade=None, nivel=0):
+        if not node:
+            return False
+
+        if not node.left and not node.right:
+            return True
+
+        left_height = self.get_height(node.left)
+        right_height = self.get_height(node.right)
+
+        b_factor = abs(left_height - right_height)
+
+        return (b_factor == 0) and self.is_regular(node)
+
+    def is_complete(self, node: Node):
+        return self.is_balanced(node) and self.is_regular(node)
+
+    def is_regular(self, node: Node):
+        if not node:
+            return False
+
+        zero_or_two_children = (node.left is None) == (node.right is None)
+        if node.right:
+            zero_or_two_children = zero_or_two_children and self.is_regular(node.right)
+        if node.left:
+            zero_or_two_children = zero_or_two_children and self.is_regular(node.left)
+
+        return zero_or_two_children
+
+    def is_balanced(self, node: Node):
+        left_height = self.get_height(node.left)
+        right_height = self.get_height(node.right)
+
+        b_factor = abs(left_height - right_height)
+
+        return b_factor < 2
+
+    def is_unbalanced(self, node: Node):
+        return not self.is_balanced(node)
+
+    def count_nodes(self, node: Node):
+        if not node:
+            return 0
+        return 1 + self.count_nodes(node.left) + self.count_nodes(node.right)
+
+    def get_height(self, node: Node):
+        if not node:
+            return -1
+
+        left_height = self.get_height(node.left)
+        right_height = self.get_height(node.right)
+
+        return 1 + max(left_height, right_height)
+
+if __name__ == "__main__":
+    tree = BinaryTree()
+
+    tree.root = Node("A")
+    tree.root.left = Node("B")
+    tree.root.right = Node("C")
+    tree.root.right.left = Node("D")
+    tree.root.right.right = Node("E")
+
+    print(tree.is_complete(tree.root))
